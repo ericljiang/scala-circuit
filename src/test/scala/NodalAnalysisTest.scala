@@ -1,9 +1,9 @@
 import breeze.linalg.*
 
-class SimulationTest extends BaseTest {
+class NodalAnalysisTest extends BaseTest {
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
   private val circuit = Circuit(
-    passiveComponents = Seq(
+    passiveComponents = Array(
       Resistor("R2", 1, 0, 1),
       Resistor("R3", 1, 2, 1),
       Resistor("R4", 2, 0, 1),
@@ -12,7 +12,7 @@ class SimulationTest extends BaseTest {
       Resistor("R7", 3, 4, 1),
       Resistor("R8", 4, 0, 1),
     ),
-    fixedSources = Seq(
+    fixedSources = Array(
       IndependentCurrentSource("I1", 0, 1, 1),
       IndependentCurrentSource("I9", 0, 4, 1)
     )
@@ -27,7 +27,7 @@ class SimulationTest extends BaseTest {
     )
     val constructAdmittanceMatrix = PrivateMethod[Matrix[Double]](Symbol("constructAdmittanceMatrix"))
     assertResult(expected) {
-      Simulation() invokePrivate constructAdmittanceMatrix(circuit)
+      NodalAnalysis() invokePrivate constructAdmittanceMatrix(circuit)
     }
   }
 
@@ -35,15 +35,15 @@ class SimulationTest extends BaseTest {
     val expected = DenseVector(1, 0, 0, 1)
     val constructCurrentSourcesVector = PrivateMethod[Vector[Double]](Symbol("constructCurrentSourcesVector"))
     assertResult(expected) {
-      Simulation() invokePrivate constructCurrentSourcesVector(circuit)
+      NodalAnalysis() invokePrivate constructCurrentSourcesVector(circuit)
     }
   }
 
   it should "simulate" in {
     val startTime = System.nanoTime
-    val result = Simulation().simulate(circuit)
+    val result = NodalAnalysis().simulate(circuit)
     val endTime = System.nanoTime
-    println(result)
+    println(result.mkString("Array(", ", ", ")"))
     println(s"${endTime - startTime} ns")
   }
 }

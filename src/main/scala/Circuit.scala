@@ -1,6 +1,6 @@
 case class Circuit(
-  passiveComponents: Seq[Component],
-  fixedSources: Seq[Component]
+  passiveComponents: Array[Component],
+  fixedSources: Array[Component]
 ) {
   private var computedN = Option.empty[Int]
   def n: Int = computedN match
