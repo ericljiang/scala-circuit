@@ -3,7 +3,8 @@ import breeze.linalg.*
 class NodalAnalysisTest extends BaseTest {
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
   private val circuit = Circuit(
-    passiveComponents = Array(
+    components = Array(
+      IndependentCurrentSource("I1", 0, 1, 1),
       Resistor("R2", 1, 0, 1),
       Resistor("R3", 1, 2, 1),
       Resistor("R4", 2, 0, 1),
@@ -11,9 +12,6 @@ class NodalAnalysisTest extends BaseTest {
       Resistor("R6", 3, 0, 1),
       Resistor("R7", 3, 4, 1),
       Resistor("R8", 4, 0, 1),
-    ),
-    fixedSources = Array(
-      IndependentCurrentSource("I1", 0, 1, 1),
       IndependentCurrentSource("I9", 0, 4, 1)
     )
   )
@@ -25,17 +23,15 @@ class NodalAnalysisTest extends BaseTest {
       (0.0, -1.0, 3.0, -1.0),
       (0.0, 0.0, -1.0, 2.0)
     )
-    val constructAdmittanceMatrix = PrivateMethod[Matrix[Double]](Symbol("constructAdmittanceMatrix"))
     assertResult(expected) {
-      NodalAnalysis() invokePrivate constructAdmittanceMatrix(circuit)
+      NodalAnalysis().constructMatrices(circuit).y
     }
   }
 
   it should "construct fixed source vector" in {
     val expected = DenseVector(1, 0, 0, 1)
-    val constructCurrentSourcesVector = PrivateMethod[Vector[Double]](Symbol("constructCurrentSourcesVector"))
     assertResult(expected) {
-      NodalAnalysis() invokePrivate constructCurrentSourcesVector(circuit)
+      NodalAnalysis().constructMatrices(circuit).j
     }
   }
 
