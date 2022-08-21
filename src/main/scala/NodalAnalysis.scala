@@ -23,7 +23,6 @@ class NodalAnalysis extends Simulation {
   }
 
   def createStamp(component: Component, n: Int): AdmittanceFormulation = component match
-    case capacitor: Capacitor => ???
     case currentSource: IndependentCurrentSource =>
       val vector = SparseVector.zeros[Double](n)
       if (currentSource.negativeNode != 0) {
