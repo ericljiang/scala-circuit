@@ -1,7 +1,6 @@
 import java.time.{Duration, Instant}
 
-@main
-def main(): Unit = {
+object Main extends App {
   println("Hello world!")
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
   val circuit = Circuit(
@@ -18,7 +17,7 @@ def main(): Unit = {
     )
   )
 
-  val simulation = NodalAnalysis()
+  val simulation = new NodalAnalysis
 
   (1 to 10).foreach { _ =>
     val start = Instant.now

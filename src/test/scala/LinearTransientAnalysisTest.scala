@@ -1,5 +1,5 @@
-import breeze.linalg.*
-import breeze.plot.*
+import breeze.linalg._
+import breeze.plot._
 
 import java.awt.Desktop
 import java.io.File
@@ -17,7 +17,7 @@ class LinearTransientAnalysisTest extends BaseTest {
       Capacitor("C2", 0, 1, 1, 0, 0)
     ))
 
-    val linearTransientAnalysis = LinearTransientAnalysis()
+    val linearTransientAnalysis = new LinearTransientAnalysis
 
     val f = Figure()
     val p = f.subplot(0)

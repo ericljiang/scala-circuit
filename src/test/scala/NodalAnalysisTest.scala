@@ -1,4 +1,4 @@
-import breeze.linalg.*
+import breeze.linalg._
 
 class NodalAnalysisTest extends BaseTest {
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
@@ -16,6 +16,8 @@ class NodalAnalysisTest extends BaseTest {
     )
   )
 
+  private val analysis = new NodalAnalysis
+
   "Simulation" should "construct admittance matrix" in {
     val expected = DenseMatrix(
       (2.0, -1.0, 0.0, 0.0),
@@ -24,20 +26,20 @@ class NodalAnalysisTest extends BaseTest {
       (0.0, 0.0, -1.0, 2.0)
     )
     assertResult(expected) {
-      NodalAnalysis().constructMatrices(circuit).y
+      analysis.constructMatrices(circuit).y
     }
   }
 
   it should "construct fixed source vector" in {
     val expected = DenseVector(1, 0, 0, 1)
     assertResult(expected) {
-      NodalAnalysis().constructMatrices(circuit).j
+      analysis.constructMatrices(circuit).j
     }
   }
 
   it should "simulate" in {
     val startTime = System.nanoTime
-    val result = NodalAnalysis().simulate(circuit)
+    val result = analysis.simulate(circuit)
     val endTime = System.nanoTime
     println(result.mkString("Array(", ", ", ")"))
     println(s"${endTime - startTime} ns")

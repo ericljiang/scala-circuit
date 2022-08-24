@@ -1,4 +1,4 @@
-import breeze.linalg.*
+import breeze.linalg._
 
 class NodalAnalysis extends Simulation {
   override def simulate(circuit: Circuit): Array[Double] = {
@@ -22,7 +22,7 @@ class NodalAnalysis extends Simulation {
       .fold(emptyMatrices)(_ + _)
   }
 
-  def createStamp(component: Component, n: Int): AdmittanceFormulation = component match
+  def createStamp(component: Component, n: Int): AdmittanceFormulation = component match {
     case currentSource: IndependentCurrentSource =>
       val vector = SparseVector.zeros[Double](n)
       if (currentSource.negativeNode != 0) {
@@ -33,7 +33,7 @@ class NodalAnalysis extends Simulation {
       }
       AdmittanceFormulation(CSCMatrix.zeros[Double](n, n), vector)
     case resistor: Resistor =>
-      val builder = CSCMatrix.Builder[Double](n, n)
+      val builder = new CSCMatrix.Builder[Double](n, n)
       if (resistor.negativeNode != 0) {
         builder.add(resistor.negativeNode - 1, resistor.negativeNode - 1, resistor.conductance)
       }
@@ -46,4 +46,5 @@ class NodalAnalysis extends Simulation {
       }
       AdmittanceFormulation(builder.result, SparseVector.zeros[Double](n))
     case _ => ???
+  }
 }
