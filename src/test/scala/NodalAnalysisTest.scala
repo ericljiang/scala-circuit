@@ -26,14 +26,14 @@ class NodalAnalysisTest extends BaseTest {
       (0.0, 0.0, -1.0, 2.0)
     )
     assertResult(expected) {
-      analysis.constructMatrices(circuit).y
+      analysis.stampMatrices(circuit, circuit.numNodes).a
     }
   }
 
   it should "construct fixed source vector" in {
     val expected = DenseVector(1, 0, 0, 1)
     assertResult(expected) {
-      analysis.constructMatrices(circuit).j
+      analysis.stampMatrices(circuit, circuit.numNodes).b
     }
   }
 

@@ -2,27 +2,26 @@ import breeze.linalg._
 
 class NodalAnalysis extends Simulation {
   override def simulate(circuit: Circuit): Array[Double] = {
-    val admittanceFormulation = constructMatrices(circuit)
-    val Y = admittanceFormulation.y.toDenseMatrix
-    val J = admittanceFormulation.j.toDenseVector
+    val admittanceFormulation = stampMatrices(circuit, circuit.numNodes)
+    val Y = admittanceFormulation.a.toDenseMatrix
+    val J = admittanceFormulation.b.toDenseVector
     val voltages: Vector[Double] = Y \ J
     voltages.toArray
   }
 
-  case class AdmittanceFormulation(y: Matrix[Double], j: Vector[Double]) {
-    def +(other: AdmittanceFormulation): AdmittanceFormulation =
-      AdmittanceFormulation(this.y + other.y, this.j + other.j)
+  case class MatrixFormulation(a: Matrix[Double], b: Vector[Double]) {
+    def +(other: MatrixFormulation): MatrixFormulation =
+      MatrixFormulation(this.a + other.a, this.b + other.b)
   }
 
-  def constructMatrices(circuit: Circuit): AdmittanceFormulation = {
-    val n = circuit.n
-    val emptyMatrices = AdmittanceFormulation(CSCMatrix.zeros[Double](n, n), SparseVector.zeros[Double](n))
+  def stampMatrices(circuit: Circuit, size: Int): MatrixFormulation = {
+    val emptyMatrices = MatrixFormulation(CSCMatrix.zeros[Double](size, size), SparseVector.zeros[Double](size))
     circuit.components
-      .map(createStamp(_, n))
+      .map(createStamp(_, size))
       .fold(emptyMatrices)(_ + _)
   }
 
-  def createStamp(component: Component, n: Int): AdmittanceFormulation = component match {
+  def createStamp(component: Component, n: Int): MatrixFormulation = component match {
     case currentSource: IndependentCurrentSource =>
       val vector = SparseVector.zeros[Double](n)
       if (currentSource.negativeNode != 0) {
@@ -31,7 +30,7 @@ class NodalAnalysis extends Simulation {
       if (currentSource.positiveNode != 0) {
         vector(currentSource.positiveNode - 1) = -currentSource.current
       }
-      AdmittanceFormulation(CSCMatrix.zeros[Double](n, n), vector)
+      MatrixFormulation(CSCMatrix.zeros[Double](n, n), vector)
     case resistor: Resistor =>
       val builder = new CSCMatrix.Builder[Double](n, n)
       if (resistor.negativeNode != 0) {
@@ -44,7 +43,7 @@ class NodalAnalysis extends Simulation {
         builder.add(resistor.negativeNode - 1, resistor.positiveNode - 1, -resistor.conductance)
         builder.add(resistor.positiveNode - 1, resistor.negativeNode - 1, -resistor.conductance)
       }
-      AdmittanceFormulation(builder.result, SparseVector.zeros[Double](n))
+      MatrixFormulation(builder.result, SparseVector.zeros[Double](n))
     case _ => ???
   }
 }

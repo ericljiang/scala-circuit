@@ -1,4 +1,4 @@
-class LinearTransientAnalysis extends NodalAnalysis {
+class LinearTransientAnalysis extends ModifiedNodalAnalysis {
   def simulateTimeStep(circuit: Circuit, deltaTime: Double): Array[Double] = {
     val equivalentCircuit = Circuit(circuit.components.flatMap(equivalentComponents(_, deltaTime)))
     simulate(equivalentCircuit)

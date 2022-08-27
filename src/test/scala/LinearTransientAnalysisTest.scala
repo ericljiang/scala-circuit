@@ -9,7 +9,7 @@ import scala.math.BigDecimal.double2bigDecimal
 class LinearTransientAnalysisTest extends BaseTest {
   "LinearTransientAnalysis" should "simulate time step" in {
     var circuit = Circuit(Array(
-      IndependentCurrentSource("I", 0, 1, 1),
+      IndependentVoltageSource("V", 0, 1, 1),
       Resistor("R1", 0, 1, 1),
       Resistor("R2", 1, 2, 1),
       Resistor("R3", 0, 2, 1),
@@ -27,7 +27,7 @@ class LinearTransientAnalysisTest extends BaseTest {
     val v2 = ArrayBuffer.empty[Double]
 
     val deltaTime = 0.001
-    0.0 to 0.1 by deltaTime foreach { t =>
+    0.0 to 10.0 by deltaTime foreach { t =>
       val voltages = linearTransientAnalysis.simulateTimeStep(circuit, deltaTime)
       time += t.doubleValue
       v1 += voltages(0)
