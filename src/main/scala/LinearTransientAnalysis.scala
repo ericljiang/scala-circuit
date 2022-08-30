@@ -5,14 +5,14 @@ class LinearTransientAnalysis(var circuit: Circuit) {
 
   def simulateTimeStep(deltaTime: Double): Array[Double] = {
     nextUnusedNode = circuit.numNodes + 1
-    val equivalentCircuit = Circuit(circuit.components.flatMap(equivalentComponents(_, deltaTime)))
+    val equivalentCircuit = Circuit(circuit.elements.flatMap(equivalentElements(_, deltaTime)))
     val voltages = mna.simulate(equivalentCircuit).slice(0, circuit.numNodes)
     updateCircuit(voltages, deltaTime)
     voltages
   }
 
   private def updateCircuit(voltages: Array[Double], deltaTime: Double): Unit = {
-    circuit = Circuit(circuit.components.map {
+    circuit = Circuit(circuit.elements.map {
       case capacitor: Capacitor =>
         val positiveVoltage = if (capacitor.positiveNode == 0) 0 else voltages(capacitor.positiveNode - 1)
         val negativeVoltage = if (capacitor.negativeNode == 0) 0 else voltages(capacitor.negativeNode - 1)
@@ -36,7 +36,7 @@ class LinearTransientAnalysis(var circuit: Circuit) {
     })
   }
 
-  private def equivalentComponents(component: Component, deltaTime: Double): Seq[Component] = component match {
+  private def equivalentElements(element: Element, deltaTime: Double): Seq[Element] = element match {
     case capacitor: Capacitor => Seq(
       // Norton equivalent "Electronic Circuit and System Simulation Methods" p. 22
       IndependentCurrentSource(
@@ -66,7 +66,7 @@ class LinearTransientAnalysis(var circuit: Circuit) {
           negativeNode = inductor.negativeNode,
           resistance = 2 * inductor.inductance / deltaTime)
       )
-    // if most components are not replaced with multiple equivalent components, this may be inefficient
-    case component => Seq(component)
+    // if most elements are not replaced with multiple equivalent elements, this may be inefficient
+    case element => Seq(element)
   }
 }

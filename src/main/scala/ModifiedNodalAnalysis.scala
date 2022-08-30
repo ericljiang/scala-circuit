@@ -17,7 +17,7 @@ class ModifiedNodalAnalysis extends NodalAnalysis {
     val n = circuit.numNodes
     val voltageSourceIdMap = new mutable.HashMap[Int, String]
     var voltageSourceCounter = 0
-    circuit.components
+    circuit.elements
       .map {
         case s: IndependentVoltageSource =>
           val i = voltageSourceCounter
@@ -38,7 +38,7 @@ class ModifiedNodalAnalysis extends NodalAnalysis {
           val z = SparseVector.zeros[Double](m + n)
           z(n + i) = s.voltage
           MatrixFormulation(a, z)
-        case component => super.createStamp(component, m + n)
+        case element => super.createStamp(element, m + n)
       }
       .fold(emptyMatrices)(_ + _)
   }

@@ -1,4 +1,4 @@
-trait Component {
+trait Element {
   def id: String
   def positiveNode: Int
   def negativeNode: Int

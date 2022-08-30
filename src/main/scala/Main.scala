@@ -4,7 +4,7 @@ object Main extends App {
   println("Hello world!")
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
   val circuit = Circuit(
-    components = Array(
+    elements = Array(
       IndependentCurrentSource("I1", 0, 1, 1),
       Resistor("R2", 1, 0, 1),
       Resistor("R3", 1, 2, 1),

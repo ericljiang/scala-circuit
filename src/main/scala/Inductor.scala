@@ -5,4 +5,4 @@ case class Inductor(
   inductance: Double,
   voltage: Double,
   current: Double
-) extends Component
+) extends Element

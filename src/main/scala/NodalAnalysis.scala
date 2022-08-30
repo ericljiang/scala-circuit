@@ -16,12 +16,12 @@ class NodalAnalysis extends Simulation {
 
   def stampMatrices(circuit: Circuit, size: Int): MatrixFormulation = {
     val emptyMatrices = MatrixFormulation(CSCMatrix.zeros[Double](size, size), SparseVector.zeros[Double](size))
-    circuit.components
+    circuit.elements
       .map(createStamp(_, size))
       .fold(emptyMatrices)(_ + _)
   }
 
-  def createStamp(component: Component, n: Int): MatrixFormulation = component match {
+  def createStamp(element: Element, n: Int): MatrixFormulation = element match {
     case currentSource: IndependentCurrentSource =>
       val vector = SparseVector.zeros[Double](n)
       if (currentSource.negativeNode != 0) {

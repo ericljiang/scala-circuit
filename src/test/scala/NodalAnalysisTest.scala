@@ -3,7 +3,7 @@ import breeze.linalg._
 class NodalAnalysisTest extends BaseTest {
   // "Electronic Circuit and System Simulation Methods" figure 1.5 p6
   private val circuit = Circuit(
-    components = Array(
+    elements = Array(
       IndependentCurrentSource("I1", 0, 1, 1),
       Resistor("R2", 1, 0, 1),
       Resistor("R3", 1, 2, 1),
