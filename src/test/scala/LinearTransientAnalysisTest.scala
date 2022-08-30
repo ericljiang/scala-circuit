@@ -44,7 +44,7 @@ class LinearTransientAnalysisTest extends BaseTest {
     val circuit = Circuit(Array(
       IndependentVoltageSource("V", 1, 0, 1),
       Resistor("R", 0, 2, 1),
-      Inductor("I", 1, 2, 1, 0, 0)
+      Inductor("L", 1, 2, 1, 0, 0)
     ))
 
     val linearTransientAnalysis = new LinearTransientAnalysis(circuit)
@@ -76,7 +76,7 @@ class LinearTransientAnalysisTest extends BaseTest {
   "LinearTransientAnalysis" should "simulate LC circuit" in {
     val circuit = Circuit(Array(
       Capacitor("C", 0, 1, 15e-6, 0, 0),
-      Inductor("I", 1, 0, 1, 0, 1)
+      Inductor("L", 1, 0, 1, 0, 1)
     ))
 
     val linearTransientAnalysis = new LinearTransientAnalysis(circuit)
@@ -84,7 +84,7 @@ class LinearTransientAnalysisTest extends BaseTest {
     val time = ArrayBuffer.empty[Double]
     val v1 = ArrayBuffer.empty[Double]
 
-    val deltaTime = 5e-5
+    val deltaTime = 5e-6
     0.0 to 0.1 by deltaTime foreach { t =>
       val voltages = linearTransientAnalysis.simulateTimeStep(deltaTime)
       time += t.doubleValue

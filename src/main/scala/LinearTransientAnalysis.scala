@@ -1,8 +1,10 @@
 class LinearTransientAnalysis(var circuit: Circuit) {
 
   private val mna = new ModifiedNodalAnalysis
+  private var nextUnusedNode = circuit.numNodes + 1
 
   def simulateTimeStep(deltaTime: Double): Array[Double] = {
+    nextUnusedNode = circuit.numNodes + 1
     val equivalentCircuit = Circuit(circuit.components.flatMap(equivalentComponents(_, deltaTime)))
     val voltages = mna.simulate(equivalentCircuit).slice(0, circuit.numNodes)
     updateCircuit(voltages, deltaTime)
@@ -48,19 +50,22 @@ class LinearTransientAnalysis(var circuit: Circuit) {
         negativeNode = capacitor.negativeNode,
         resistance = deltaTime / (2 * capacitor.capacitance))
     )
-    case inductor: Inductor => Seq(
-      // Thevenin equivalent "Electronic Circuit and System Simulation Methods" p. 23
-      IndependentVoltageSource(
-        id = s"${inductor.id}.I_eq",
-        positiveNode = inductor.positiveNode,
-        negativeNode = 2, // TODO
-        voltage = inductor.voltage + 2 * inductor.inductance / deltaTime * inductor.current),
-      Resistor(
-        id = s"${inductor.id}.R_eq",
-        positiveNode = 2, // TODO
-        negativeNode = inductor.negativeNode,
-        resistance = 2 * inductor.inductance / deltaTime)
-    )
+    case inductor: Inductor =>
+      val artificialNode = nextUnusedNode
+      nextUnusedNode += 1
+      Seq(
+        // Thevenin equivalent "Electronic Circuit and System Simulation Methods" p. 23
+        IndependentVoltageSource(
+          id = s"${inductor.id}.I_eq",
+          positiveNode = inductor.positiveNode,
+          negativeNode = artificialNode,
+          voltage = inductor.voltage + 2 * inductor.inductance / deltaTime * inductor.current),
+        Resistor(
+          id = s"${inductor.id}.R_eq",
+          positiveNode = artificialNode,
+          negativeNode = inductor.negativeNode,
+          resistance = 2 * inductor.inductance / deltaTime)
+      )
     // if most components are not replaced with multiple equivalent components, this may be inefficient
     case component => Seq(component)
   }
